@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click the Color</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #target-color {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #color-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            width: 300px;
+            justify-content: center;
+        }
+        .color-box {
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        #stats {
+            margin-top: 20px;
+        }
+        #timer, #score {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Click the Color</h1>
+    <div id="target-color"></div>
+    <div id="color-container"></div>
+    <div id="stats">
+        <div id="timer">Tempo: 10s</div>
+        <div id="score">Pontuação: 0</div>
+    </div>
+
+    <script>
+        const colors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown"];
+        let targetColor = "";
+        let score = 0;
+        let time = 10; // Inicia com 10 segundos por rodada
+        let timerInterval;
+
+        const targetColorDisplay = document.getElementById('target-color');
+        const colorContainer = document.getElementById('color-container');
+        const timerDisplay = document.getElementById('timer');
+        const scoreDisplay = document.getElementById('score');
+
+        function startGame() {
+            score = 0;
+            updateScore();
+            nextRound();
+        }
+
+        function nextRound() {
+            resetTime(); // Reseta o tempo para 10 segundos a cada rodada
+            targetColor = colors[Math.floor(Math.random() * colors.length)];
+            targetColorDisplay.textContent = `Clique na cor: ${targetColor}`;
+            generateColorBoxes();
+        }
+
+        function generateColorBoxes() {
+            colorContainer.innerHTML = ""; // Limpa os quadrados anteriores
+            const shuffledColors = [...colors].sort(() => 0.5 - Math.random());
+            shuffledColors.forEach(color => {
+                const colorBox = document.createElement('div');
+                colorBox.classList.add('color-box');
+                colorBox.style.backgroundColor = color;
+                colorBox.addEventListener('click', () => checkColor(color));
+                colorContainer.appendChild(colorBox);
+            });
+        }
+
+        function checkColor(selectedColor) {
+            if (selectedColor === targetColor) {
+                score++;
+                updateScore();
+                nextRound(); // Inicia a próxima rodada
+            }
+        }
+
+        function updateScore() {
+            scoreDisplay.textContent = `Pontuação: ${score}`;
+        }
+
+        function resetTime() {
+            clearInterval(timerInterval); // Limpa o intervalo anterior, se houver
+            time = 10; // Reseta o tempo para 10 segundos
+            timerDisplay.textContent = `Tempo: ${time}s`;
+            startTimer();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                time--;
+                timerDisplay.textContent = `Tempo: ${time}s`;
+                if (time < 0) {
+                    stopGame();
+                }
+            }, 1000);
+        }
+
+        function stopGame() {
+            clearInterval(timerInterval);
+            alert(`Fim do jogo! Sua pontuação final é: ${score}`);
+            startGame(); // Reinicia o jogo após o alerta
+        }
+
+        startGame();
+    </script>
+
+</body>
+</html>
